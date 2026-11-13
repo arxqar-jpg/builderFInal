@@ -1,4 +1,4 @@
-package kz.smartcafe.PartOrder;
+package kz.smartcafe.PartIslam.order;
 
 public class PromoRate implements Discount {
     private final int percentage;

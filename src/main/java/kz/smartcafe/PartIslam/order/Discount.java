@@ -1,4 +1,4 @@
-package kz.smartcafe.PartOrder;
+package kz.smartcafe.PartIslam.order;
 
 public interface Discount {
     long calculateDiscount(long subtotal);

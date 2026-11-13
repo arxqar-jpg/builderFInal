@@ -1,4 +1,4 @@
-package kz.smartcafe.PartOrder;
+package kz.smartcafe.PartIslam.order;
 
 import kz.smartcafe.PartDarkhan.Menu;
 

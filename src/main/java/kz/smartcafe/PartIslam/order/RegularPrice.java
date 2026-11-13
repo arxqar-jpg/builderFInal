@@ -1,4 +1,4 @@
-package kz.smartcafe.PartOrder;
+package kz.smartcafe.PartIslam.order;
 
 public class RegularPrice implements Discount {
     @Override

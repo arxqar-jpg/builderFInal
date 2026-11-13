@@ -1,7 +1,7 @@
 package kz.smartcafe;
 
 import kz.smartcafe.PartDarkhan.*;
-import kz.smartcafe.PartOrder.OrderConsole;
+import kz.smartcafe.PartIslam.order.OrderConsole;
 import java.util.Scanner;
 
 public class Main {

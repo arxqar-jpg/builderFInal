@@ -1,4 +1,4 @@
-package kz.smartcafe.PartOrder;
+package kz.smartcafe.PartIslam.order;
 
 public record OrderLine(String name, int unitPrice, int quantity) {
     public OrderLine {
