@@ -1,6 +1,6 @@
 package kz.smartcafe.PartOrder;
 
-public class NoDiscount implements DiscountStrategy {
+public class RegularPrice implements Discount {
     @Override
     public long calculateDiscount(long subtotal) {
         return 0;

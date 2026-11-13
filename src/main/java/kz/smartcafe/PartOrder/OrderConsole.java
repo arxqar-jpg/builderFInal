@@ -5,15 +5,15 @@ import kz.smartcafe.PartDarkhan.Menu;
 import java.util.List;
 import java.util.Scanner;
 
-public class OrderService {
+public class OrderConsole {
     private static final int STUDENT_PERCENTAGE = 10;
     private static final int PROMO_PERCENTAGE = 15;
     private static final String PROMO_CODE = "CAFE15";
 
     private final Scanner scanner;
-    private final OrderBuilder builder = new OrderBuilder();
+    private final CafeOrderBuilder builder = new CafeOrderBuilder();
 
-    public OrderService(Scanner scanner) {
+    public OrderConsole(Scanner scanner) {
         this.scanner = scanner;
     }
 
@@ -26,7 +26,7 @@ public class OrderService {
     }
 
     public void editOrder() {
-        List<OrderItem> items = builder.getItems();
+        List<OrderLine> items = builder.getItems();
         if (items.isEmpty()) {
             System.out.println("Your order is empty");
             return;
@@ -49,7 +49,7 @@ public class OrderService {
     }
 
     public boolean checkout() {
-        List<OrderItem> items = builder.getItems();
+        List<OrderLine> items = builder.getItems();
         if (items.isEmpty()) {
             System.out.println("Add at least one item before checkout");
             return false;
@@ -66,12 +66,12 @@ public class OrderService {
         if (note == null) {
             return false;
         }
-        DiscountStrategy discount = chooseDiscount();
+        Discount discount = chooseDiscount();
         if (discount == null) {
             return false;
         }
 
-        Order order = builder.setNote(note).setDiscountStrategy(discount).build();
+        CafeOrder order = builder.setNote(note).setDiscountStrategy(discount).build();
         System.out.println("\nORDER CONFIRMED");
         System.out.println("Customer: " + order.getCustomerName());
         if (!order.getNote().isEmpty()) {
@@ -83,7 +83,7 @@ public class OrderService {
         return true;
     }
 
-    private DiscountStrategy chooseDiscount() {
+    private Discount chooseDiscount() {
         while (true) {
             System.out.println("0. No discount");
             System.out.println("1. Student (" + STUDENT_PERCENTAGE + "%)");
@@ -93,10 +93,10 @@ public class OrderService {
                 return null;
             }
             if (choice == 0) {
-                return new NoDiscount();
+                return new RegularPrice();
             }
             if (choice == 1) {
-                return new StudentDiscount(STUDENT_PERCENTAGE);
+                return new StudentRate(STUDENT_PERCENTAGE);
             }
 
             String code = readLine("Promo code: ");
@@ -104,17 +104,17 @@ public class OrderService {
                 return null;
             }
             try {
-                return new PromoCodeDiscount(code, PROMO_CODE, PROMO_PERCENTAGE);
+                return new PromoRate(code, PROMO_CODE, PROMO_PERCENTAGE);
             } catch (IllegalArgumentException e) {
                 System.out.println(e.getMessage());
             }
         }
     }
 
-    private void showItems(List<OrderItem> items) {
+    private void showItems(List<OrderLine> items) {
         System.out.println("\nYOUR ORDER");
         for (int i = 0; i < items.size(); i++) {
-            OrderItem item = items.get(i);
+            OrderLine item = items.get(i);
             System.out.println((i + 1) + ". " + item.quantity() + " x " + item.name()
                     + " - " + item.subtotal() + " KZT");
         }

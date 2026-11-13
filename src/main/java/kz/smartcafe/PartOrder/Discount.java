@@ -1,6 +1,6 @@
 package kz.smartcafe.PartOrder;
 
-public interface DiscountStrategy {
+public interface Discount {
     long calculateDiscount(long subtotal);
 
     static int validatePercentage(int percentage) {

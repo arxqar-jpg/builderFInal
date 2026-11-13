@@ -2,22 +2,22 @@ package kz.smartcafe.PartOrder;
 
 import java.util.List;
 
-public final class Order {
-    private final List<OrderItem> items;
+public final class CafeOrder {
+    private final List<OrderLine> items;
     private final String customerName;
     private final String note;
     private final long subtotal;
     private final long discount;
 
-    Order(List<OrderItem> items, String customerName, String note, DiscountStrategy discountStrategy) {
+    CafeOrder(List<OrderLine> items, String customerName, String note, Discount discountStrategy) {
         this.items = List.copyOf(items);
         this.customerName = customerName;
         this.note = note;
-        this.subtotal = this.items.stream().mapToLong(OrderItem::subtotal).sum();
+        this.subtotal = this.items.stream().mapToLong(OrderLine::subtotal).sum();
         this.discount = discountStrategy.calculateDiscount(subtotal);
     }
 
-    public List<OrderItem> getItems() {
+    public List<OrderLine> getItems() {
         return items;
     }
 

@@ -5,16 +5,16 @@ import kz.smartcafe.PartDarkhan.Menu;
 import java.util.ArrayList;
 import java.util.List;
 
-public class OrderBuilder {
-    private final List<OrderItem> items = new ArrayList<>();
+public class CafeOrderBuilder {
+    private final List<OrderLine> items = new ArrayList<>();
     private String customerName = "";
     private String note = "";
-    private DiscountStrategy discountStrategy = new NoDiscount();
+    private Discount discountStrategy = new RegularPrice();
 
-    public OrderBuilder addItem(Menu menuItem, int quantity) {
-        OrderItem newItem = new OrderItem(menuItem.getName(), menuItem.getPrice(), quantity);
+    public CafeOrderBuilder addItem(Menu menuItem, int quantity) {
+        OrderLine newItem = new OrderLine(menuItem.getName(), menuItem.getPrice(), quantity);
         for (int i = 0; i < items.size(); i++) {
-            OrderItem item = items.get(i);
+            OrderLine item = items.get(i);
             if (item.name().equals(newItem.name()) && item.unitPrice() == newItem.unitPrice()) {
                 if (quantity > Integer.MAX_VALUE - item.quantity()) {
                     throw new IllegalArgumentException("Quantity is too large");
@@ -26,18 +26,18 @@ public class OrderBuilder {
         return this;
     }
 
-    public OrderBuilder changeQuantity(int index, int quantity) {
-        OrderItem item = items.get(index);
-        items.set(index, new OrderItem(item.name(), item.unitPrice(), quantity));
+    public CafeOrderBuilder changeQuantity(int index, int quantity) {
+        OrderLine item = items.get(index);
+        items.set(index, new OrderLine(item.name(), item.unitPrice(), quantity));
         return this;
     }
 
-    public OrderBuilder removeItem(int index) {
+    public CafeOrderBuilder removeItem(int index) {
         items.remove(index);
         return this;
     }
 
-    public OrderBuilder setCustomerName(String customerName) {
+    public CafeOrderBuilder setCustomerName(String customerName) {
         if (customerName.isBlank()) {
             throw new IllegalArgumentException("Please enter the customer name");
         }
@@ -45,27 +45,27 @@ public class OrderBuilder {
         return this;
     }
 
-    public OrderBuilder setNote(String note) {
+    public CafeOrderBuilder setNote(String note) {
         this.note = note.strip();
         return this;
     }
 
-    public OrderBuilder setDiscountStrategy(DiscountStrategy discountStrategy) {
+    public CafeOrderBuilder setDiscountStrategy(Discount discountStrategy) {
         this.discountStrategy = discountStrategy;
         return this;
     }
 
-    public List<OrderItem> getItems() {
+    public List<OrderLine> getItems() {
         return List.copyOf(items);
     }
 
-    public Order build() {
+    public CafeOrder build() {
         if (items.isEmpty()) {
             throw new IllegalArgumentException("Add at least one item before checkout");
         }
         if (customerName.isEmpty()) {
             throw new IllegalArgumentException("Please enter the customer name");
         }
-        return new Order(items, customerName, note, discountStrategy);
+        return new CafeOrder(items, customerName, note, discountStrategy);
     }
 }

@@ -1,7 +1,7 @@
 package kz.smartcafe;
 
 import kz.smartcafe.PartDarkhan.*;
-import kz.smartcafe.PartOrder.OrderService;
+import kz.smartcafe.PartOrder.OrderConsole;
 import java.util.Scanner;
 
 public class Main {
@@ -15,7 +15,7 @@ public class Main {
 
         MenuService menuService = new MenuService(factories);
         Scanner scanner = new Scanner(System.in);
-        OrderService orderService = new OrderService(scanner);
+        OrderConsole orderConsole = new OrderConsole(scanner);
 
         while (true) {
             showWelcome();
@@ -29,11 +29,11 @@ public class Main {
 
             try {
                 if (action == 3) {
-                    orderService.editOrder();
+                    orderConsole.editOrder();
                     continue;
                 }
                 if (action == 4) {
-                    if (orderService.checkout()) {
+                    if (orderConsole.checkout()) {
                         break;
                     }
                     continue;
@@ -71,7 +71,7 @@ public class Main {
                 item = addToppings(scanner, item);
 
                 System.out.println("Price per item: " + item.getPrice() + " KZT");
-                orderService.addItem(item);
+                orderConsole.addItem(item);
 
             } catch (IllegalArgumentException e) {
                 System.out.println(e.getMessage());
