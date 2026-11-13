@@ -1,7 +1,7 @@
 package kz.smartcafe.PartIslam.order;
 
 import kz.smartcafe.PartDarkhan.Menu;
-
+import kz.smartcafe.PartAitem.CheckoutFacade;
 import java.util.List;
 import java.util.Scanner;
 
@@ -10,13 +10,13 @@ public class OrderConsole {
     private static final int PROMO_PERCENTAGE = 15;
     private static final String PROMO_CODE = "CAFE15";
 
-    private final Scanner scanner;
+    private final Scanner scanner;private final CheckoutFacade checkoutFacade;
     private final CafeOrderBuilder builder = new CafeOrderBuilder();
 
-    public OrderConsole(Scanner scanner) {
+    public OrderConsole(Scanner scanner, CheckoutFacade checkoutFacade) {
         this.scanner = scanner;
+        this.checkoutFacade = checkoutFacade;
     }
-
     public void addItem(Menu item) {
         int quantity = readNumber("Quantity (0 to cancel): ", Integer.MAX_VALUE);
         if (quantity > 0) {
@@ -72,6 +72,7 @@ public class OrderConsole {
         }
 
         CafeOrder order = builder.setNote(note).setDiscountStrategy(discount).build();
+        checkoutFacade.placeOrder(order);
         System.out.println("\nORDER CONFIRMED");
         System.out.println("Customer: " + order.getCustomerName());
         if (!order.getNote().isEmpty()) {

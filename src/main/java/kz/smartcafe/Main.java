@@ -3,6 +3,11 @@ package kz.smartcafe;
 import kz.smartcafe.PartDarkhan.*;
 import kz.smartcafe.PartIslam.order.OrderConsole;
 import java.util.Scanner;
+import kz.smartcafe.PartAitem.OrderManager;
+import kz.smartcafe.PartAitem.CheckoutFacade;
+import kz.smartcafe.PartAitem.ClientNotification;
+import kz.smartcafe.PartAitem.KitchenNotification;
+import kz.smartcafe.PartAitem.StaffOrderConsole;
 
 public class Main {
 
@@ -15,7 +20,18 @@ public class Main {
 
         MenuService menuService = new MenuService(factories);
         Scanner scanner = new Scanner(System.in);
-        OrderConsole orderConsole = new OrderConsole(scanner);
+        OrderManager orderManager = new OrderManager();
+
+        orderManager.addObserver(new ClientNotification());
+        orderManager.addObserver(new KitchenNotification());
+
+        CheckoutFacade checkoutFacade =
+                new CheckoutFacade(orderManager);
+
+        StaffOrderConsole staffConsole =
+                new StaffOrderConsole(checkoutFacade, scanner);
+        OrderConsole orderConsole =
+                new OrderConsole(scanner, checkoutFacade);
 
         while (true) {
             showWelcome();
@@ -34,8 +50,10 @@ public class Main {
                 }
                 if (action == 4) {
                     if (orderConsole.checkout()) {
+                        staffConsole.showStaffMenu();
                         break;
                     }
+
                     continue;
                 }
 
