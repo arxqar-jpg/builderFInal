@@ -1,6 +1,7 @@
 package kz.smartcafe;
 
 import kz.smartcafe.PartDarkhan.*;
+import kz.smartcafe.PartOrder.OrderService;
 import java.util.Scanner;
 
 public class Main {
@@ -14,6 +15,7 @@ public class Main {
 
         MenuService menuService = new MenuService(factories);
         Scanner scanner = new Scanner(System.in);
+        OrderService orderService = new OrderService(scanner);
 
         while (true) {
             showWelcome();
@@ -26,6 +28,17 @@ public class Main {
             }
 
             try {
+                if (action == 3) {
+                    orderService.editOrder();
+                    continue;
+                }
+                if (action == 4) {
+                    if (orderService.checkout()) {
+                        break;
+                    }
+                    continue;
+                }
+
                 Menu item;
 
                 if (action == 1) {
@@ -49,7 +62,7 @@ public class Main {
 
                     item = menuService.createItem(number);
                 } else {
-                    System.out.println("Please choose 1, 2 or 0");
+                    System.out.println("Please choose a listed option");
                     continue;
                 }
 
@@ -57,12 +70,8 @@ public class Main {
 
                 item = addToppings(scanner, item);
 
-                System.out.println("\nYour item is ready!");
-                System.out.println("Item: " + item.getName());
-                System.out.println("Price: " + item.getPrice() + " KZT");
-
-                // Order Service will receive item here.
-                break;
+                System.out.println("Price per item: " + item.getPrice() + " KZT");
+                orderService.addItem(item);
 
             } catch (IllegalArgumentException e) {
                 System.out.println(e.getMessage());
@@ -75,6 +84,8 @@ public class Main {
         System.out.println("What would you like to have?");
         System.out.println("1. Order by name");
         System.out.println("2. Show menu");
+        System.out.println("3. Edit order");
+        System.out.println("4. Checkout");
         System.out.println("0. Exit");
     }
 
