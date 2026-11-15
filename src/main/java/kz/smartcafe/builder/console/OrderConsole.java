@@ -1,9 +1,10 @@
-package kz.smartcafe.facade.console;
+package kz.smartcafe.builder.console;
 
 import kz.smartcafe.builder.order.CafeOrder;
 import kz.smartcafe.builder.order.CafeOrderBuilder;
 import kz.smartcafe.builder.order.OrderLine;
 import kz.smartcafe.facade.CheckoutFacade;
+import kz.smartcafe.facade.console.ConsoleInput;
 import kz.smartcafe.factory.product.Menu;
 import kz.smartcafe.strategy.Discount;
 import kz.smartcafe.strategy.concrete.PromoRate;

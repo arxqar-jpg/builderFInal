@@ -3,7 +3,7 @@ package kz.smartcafe;
 import kz.smartcafe.decorator.concrete.CheeseDecorator;
 import kz.smartcafe.decorator.concrete.SauceDecorator;
 import kz.smartcafe.facade.CheckoutFacade;
-import kz.smartcafe.facade.console.OrderConsole;
+import kz.smartcafe.builder.console.OrderConsole;
 import kz.smartcafe.facade.console.ConsoleInput;
 import kz.smartcafe.facade.console.StaffOrderConsole;
 import kz.smartcafe.factory.creator.BurgerFactory;
