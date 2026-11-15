@@ -1,13 +1,22 @@
 package kz.smartcafe;
 
-import kz.smartcafe.PartDarkhan.*;
-import kz.smartcafe.PartIslam.order.OrderConsole;
+import kz.smartcafe.decorator.concrete.CheeseDecorator;
+import kz.smartcafe.decorator.concrete.SauceDecorator;
+import kz.smartcafe.facade.CheckoutFacade;
+import kz.smartcafe.facade.console.OrderConsole;
+import kz.smartcafe.facade.console.ConsoleInput;
+import kz.smartcafe.facade.console.StaffOrderConsole;
+import kz.smartcafe.factory.creator.BurgerFactory;
+import kz.smartcafe.factory.creator.DrinkFactory;
+import kz.smartcafe.factory.creator.MenuFactory;
+import kz.smartcafe.factory.creator.PizzaFactory;
+import kz.smartcafe.factory.product.Menu;
+import kz.smartcafe.factory.service.MenuService;
+import kz.smartcafe.observer.notification.ClientNotification;
+import kz.smartcafe.observer.notification.KitchenNotification;
+import kz.smartcafe.observer.subject.OrderManager;
+
 import java.util.Scanner;
-import kz.smartcafe.PartAitem.OrderManager;
-import kz.smartcafe.PartAitem.CheckoutFacade;
-import kz.smartcafe.PartAitem.ClientNotification;
-import kz.smartcafe.PartAitem.KitchenNotification;
-import kz.smartcafe.PartAitem.StaffOrderConsole;
 
 public class Main {
 
@@ -20,6 +29,7 @@ public class Main {
 
         MenuService menuService = new MenuService(factories);
         Scanner scanner = new Scanner(System.in);
+        ConsoleInput input = new ConsoleInput(scanner);
         OrderManager orderManager = new OrderManager();
 
         orderManager.addObserver(new ClientNotification());
@@ -29,16 +39,16 @@ public class Main {
                 new CheckoutFacade(orderManager);
 
         StaffOrderConsole staffConsole =
-                new StaffOrderConsole(checkoutFacade, scanner);
+                new StaffOrderConsole(checkoutFacade, input);
         OrderConsole orderConsole =
-                new OrderConsole(scanner, checkoutFacade);
+                new OrderConsole(input, checkoutFacade);
 
         while (true) {
             showWelcome();
 
-            int action = readNumber(scanner, "Choose an option: ");
+            int action = input.readNumber("Choose an option: ", 4);
 
-            if (action == 0) {
+            if (action <= 0) {
                 System.out.println("Thank you for visiting Smart Cafe!");
                 break;
             }
@@ -51,7 +61,6 @@ public class Main {
                 if (action == 4) {
                     if (orderConsole.checkout()) {
                         staffConsole.showStaffMenu();
-                        break;
                     }
 
                     continue;
@@ -60,21 +69,18 @@ public class Main {
                 Menu item;
 
                 if (action == 1) {
-                    System.out.print("Enter the item name: ");
-
-                    if (!scanner.hasNextLine()) {
+                    String name = input.readLine("Enter the item name: ");
+                    if (name == null) {
                         break;
                     }
 
-                    item = menuService.createItemByName(
-                            scanner.nextLine()
-                    );
+                    item = menuService.createItemByName(name);
                 } else if (action == 2) {
                     showMenu(menuService);
 
-                    int number = readNumber(scanner, "Choose item: ");
+                    int number = input.readNumber("Choose item: ", factories.length);
 
-                    if (number == 0) {
+                    if (number <= 0) {
                         continue;
                     }
 
@@ -86,7 +92,7 @@ public class Main {
 
                 System.out.println("You chose: " + item.getName());
 
-                item = addToppings(scanner, item);
+                item = addToppings(input, item);
 
                 System.out.println("Price per item: " + item.getPrice() + " KZT");
                 orderConsole.addItem(item);
@@ -95,6 +101,7 @@ public class Main {
                 System.out.println(e.getMessage());
             }
         }
+        scanner.close();
     }
 
     private static void showWelcome() {
@@ -122,12 +129,12 @@ public class Main {
         System.out.println("0. Back");
     }
 
-    private static Menu addToppings(Scanner scanner, Menu item) {
+    private static Menu addToppings(ConsoleInput input, Menu item) {
         if (!item.supportsToppings()) {
             return item;
         }
 
-        if (askYesNo(scanner,
+        if (askYesNo(input,
                 "Add cheese for " + CheeseDecorator.PRICE + " KZT?")) {
 
             item = new CheeseDecorator(item);
@@ -138,7 +145,7 @@ public class Main {
             );
         }
 
-        if (askYesNo(scanner,
+        if (askYesNo(input,
                 "Add sauce for " + SauceDecorator.PRICE + " KZT?")) {
 
             item = new SauceDecorator(item);
@@ -152,39 +159,11 @@ public class Main {
         return item;
     }
 
-    private static boolean askYesNo(Scanner scanner, String question) {
+    private static boolean askYesNo(ConsoleInput input, String question) {
         System.out.println(question);
         System.out.println("1. Yes");
         System.out.println("0. No");
 
-        while (true) {
-            int choice = readNumber(scanner, "Your choice: ");
-
-            if (choice == 1) {
-                return true;
-            }
-
-            if (choice == 0) {
-                return false;
-            }
-
-            System.out.println("Please choose 1 for Yes or 0 for No");
-        }
-    }
-
-    private static int readNumber(Scanner scanner, String message) {
-        while (true) {
-            System.out.print(message);
-
-            if (!scanner.hasNextLine()) {
-                return 0;
-            }
-
-            try {
-                return Integer.parseInt(scanner.nextLine().trim());
-            } catch (NumberFormatException e) {
-                System.out.println("Please enter a whole number");
-            }
-        }
+        return input.readNumber("Your choice: ", 1) == 1;
     }
 }
